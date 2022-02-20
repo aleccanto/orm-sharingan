@@ -8,9 +8,10 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.com.meuorm.ddd.orm.Consulta;
-import br.com.meuorm.noorm.Model.Pessoa;
-import br.com.meuorm.orm.conexao.ConexaoFactory;
+import br.com.sharingan.ddd.orm.Consulta;
+import br.com.sharingan.noorm.Model.Pessoa;
+import br.com.sharingan.orm.ConsultaImpl;
+import br.com.sharingan.orm.conexao.ConexaoFactory;
 
 public class ConsultaTest {
 
@@ -43,10 +44,8 @@ public class ConsultaTest {
 
         Pessoa pessoa = consulta.findById(Pessoa.class, 1L);
 
-        System.out.println(pessoa.getNome());
-        System.out.println(pessoa.getId());
-
         Assert.assertEquals("pessoa", pessoa.getNome());
+        Assert.assertEquals(Long.valueOf(1), pessoa.getId());
     }
 
 }

@@ -1,4 +1,4 @@
-package br.com.meuorm.orm;
+package br.com.sharingan.orm;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import br.com.meuorm.ddd.orm.Consulta;
-import br.com.meuorm.orm.conexao.ConexaoFactory;
+import br.com.sharingan.ddd.orm.Consulta;
+import br.com.sharingan.orm.conexao.ConexaoFactory;
 
 public class ConsultaImpl<T> implements Consulta<T> {
 
-	private final Logger logger = Logger.getLogger(ConexaoFactory.class.getName());
+	private final Logger logger = Logger.getLogger(ConsultaImpl.class.getName());
 
 	private final Connection conexao;
 
@@ -65,7 +65,7 @@ public class ConsultaImpl<T> implements Consulta<T> {
 			entidade = mapearEntidade(t, stmt, rs);
 		}
 		logger.info("finalizando a consulta findById");
-		return entidade.isEmpty() ? null : (T) t.getConstructors()[0].newInstance();
+		return entidade.isEmpty() ? null : entidade.get(0);
 	}
 
 	private List<T> mapearEntidade(Class<T> t, PreparedStatement stmt, ResultSet rs) {

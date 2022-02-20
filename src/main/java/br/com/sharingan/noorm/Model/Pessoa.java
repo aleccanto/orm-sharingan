@@ -1,4 +1,4 @@
-package br.com.meuorm.noorm.Model;
+package br.com.sharingan.noorm.Model;
 
 public class Pessoa {
 

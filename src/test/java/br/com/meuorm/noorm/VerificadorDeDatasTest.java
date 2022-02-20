@@ -6,6 +6,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.com.sharingan.noorm.VerificadorDeDatas;
+
 public class VerificadorDeDatasTest {
 
 	VerificadorDeDatas verificadorDeDatas;

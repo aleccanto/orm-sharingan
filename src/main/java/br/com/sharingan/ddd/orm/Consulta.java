@@ -1,4 +1,4 @@
-package br.com.meuorm.ddd.orm;
+package br.com.sharingan.ddd.orm;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;

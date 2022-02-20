@@ -5,7 +5,7 @@
 	<groupId>br.com.meuorm</groupId>
 	<artifactId>meu-orm</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Meu ORM</name>
+	<name>ORM Sharingan</name>
 	<description>Projeto de Teste para criação de um orm em Java</description>
 
 	<properties>

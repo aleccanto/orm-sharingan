@@ -1,4 +1,4 @@
-package br.com.meuorm.noorm;
+package br.com.sharingan.noorm;
 
 import java.time.LocalDate;
 
