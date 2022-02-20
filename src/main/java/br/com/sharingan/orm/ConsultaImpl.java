@@ -38,7 +38,7 @@ public class ConsultaImpl<T> implements Consulta<T> {
 		} catch (SQLException e) {
 			logger.info("Erro ao criar o PreparedStatement: " + e.getLocalizedMessage());
 		}
-		List<T> lista = new ArrayList<T>();
+		List<T> lista = new ArrayList<>();
 		if (Objects.nonNull(stmt) && Objects.nonNull(rs)) {
 			lista.addAll(mapearEntidade(t, stmt, rs));
 		}
@@ -63,6 +63,8 @@ public class ConsultaImpl<T> implements Consulta<T> {
 		List<T> entidade = null;
 		if (Objects.nonNull(stmt) && Objects.nonNull(rs)) {
 			entidade = mapearEntidade(t, stmt, rs);
+		} else {
+			return null;
 		}
 		logger.info("finalizando a consulta findById");
 		return entidade.isEmpty() ? null : entidade.get(0);
@@ -70,22 +72,13 @@ public class ConsultaImpl<T> implements Consulta<T> {
 
 	private List<T> mapearEntidade(Class<T> t, PreparedStatement stmt, ResultSet rs) {
 		logger.info("Iniciando o mapeamento da entidade");
-		List<T> lista = new ArrayList<T>();
+		List<T> lista = new ArrayList<>();
 		try {
 			lista = percorrerCamposSelect(t, rs);
 		} catch (InstantiationException e) {
 			logger.info("Erro ao criar o objeto: " + e.getLocalizedMessage());
-		} catch (IllegalAccessException e) {
-			logger.info(ERRO_AO_ACESSAR_O_OBJETO + e.getLocalizedMessage());
-		} catch (IllegalArgumentException e) {
-			logger.info(ERRO_AO_ACESSAR_O_OBJETO + e.getLocalizedMessage());
-		} catch (InvocationTargetException e) {
-			logger.info(ERRO_AO_ACESSAR_O_OBJETO + e.getLocalizedMessage());
-		} catch (NoSuchMethodException e) {
-			logger.info(ERRO_AO_ACESSAR_O_OBJETO + e.getLocalizedMessage());
-		} catch (SecurityException e) {
-			logger.info(ERRO_AO_ACESSAR_O_OBJETO + e.getLocalizedMessage());
-		} catch (SQLException e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+				| SecurityException | SQLException e) {
 			logger.info(ERRO_AO_ACESSAR_O_OBJETO + e.getLocalizedMessage());
 		} finally {
 			try {
@@ -107,7 +100,7 @@ public class ConsultaImpl<T> implements Consulta<T> {
 			throws SQLException, InstantiationException,
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.info("Iniciando o percorrerCamposSelect");
-		List<T> listaAux = new ArrayList<T>();
+		List<T> listaAux = new ArrayList<>();
 		while (rs.next()) {
 			T obj = t.getConstructor().newInstance();
 			for (Field field : t.getDeclaredFields()) {

@@ -2,13 +2,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.meuorm</groupId>
 	<artifactId>meu-orm</artifactId>
-	<version>0.2</version>
+	<version>0.2.1</version>
 	<name>ORM Sharingan</name>
 	<description>Projeto de Teste para criação de um orm em Java</description>
 
 	<properties>
 		<junit.version>4.13.2</junit.version>
-		<slf4j.version>1.7.36</slf4j.version>
 		<postgresql.version>42.3.3</postgresql.version>
 		<java.version>11</java.version>
 	</properties>
@@ -21,17 +20,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>${postgresql.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
