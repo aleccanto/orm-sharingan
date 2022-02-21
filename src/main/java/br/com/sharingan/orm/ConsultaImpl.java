@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 import br.com.sharingan.ddd.orm.Consulta;
-import br.com.sharingan.orm.conexao.ConexaoFactory;
+import br.com.sharingan.ddd.orm.conexao.ConexaoFactory;
 
 public class ConsultaImpl<T> implements Consulta<T> {
 
@@ -51,6 +51,7 @@ public class ConsultaImpl<T> implements Consulta<T> {
 		logger.info("Executando a consulta findById");
 		String classeName = t.getSimpleName();
 		String sql = "SELECT * FROM " + classeName + " WHERE id = ?";
+		logger.info("SQL: \n\t" + sql);
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
@@ -96,8 +97,7 @@ public class ConsultaImpl<T> implements Consulta<T> {
 		return lista;
 	}
 
-	private List<T> percorrerCamposSelect(Class<T> t, ResultSet rs)
-			throws SQLException, InstantiationException,
+	private List<T> percorrerCamposSelect(Class<T> t, ResultSet rs) throws SQLException, InstantiationException,
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.info("Iniciando o percorrerCamposSelect");
 		List<T> listaAux = new ArrayList<>();
@@ -107,29 +107,29 @@ public class ConsultaImpl<T> implements Consulta<T> {
 				field.setAccessible(true);
 				logger.info("Iniciando o switch");
 				switch (field.getType().getSimpleName()) {
-					case "String":
-						field.set(obj, rs.getString(field.getName()));
-						break;
-					case "Long":
-						field.set(obj, rs.getLong(field.getName()));
-						break;
-					case "Integer":
-						field.set(obj, rs.getInt(field.getName()));
-						break;
-					case "Double":
-						field.set(obj, rs.getDouble(field.getName()));
-						break;
-					case "Float":
-						field.set(obj, rs.getFloat(field.getName()));
-						break;
-					case "Boolean":
-						field.set(obj, rs.getBoolean(field.getName()));
-						break;
-					case "Date":
-						field.set(obj, rs.getDate(field.getName()));
-						break;
-					default:
-						break;
+				case "String":
+					field.set(obj, rs.getString(field.getName()));
+					break;
+				case "Long":
+					field.set(obj, rs.getLong(field.getName()));
+					break;
+				case "Integer":
+					field.set(obj, rs.getInt(field.getName()));
+					break;
+				case "Double":
+					field.set(obj, rs.getDouble(field.getName()));
+					break;
+				case "Float":
+					field.set(obj, rs.getFloat(field.getName()));
+					break;
+				case "Boolean":
+					field.set(obj, rs.getBoolean(field.getName()));
+					break;
+				case "Date":
+					field.set(obj, rs.getDate(field.getName()));
+					break;
+				default:
+					break;
 				}
 				logger.info("finalizando o switch");
 			}
@@ -137,5 +137,59 @@ public class ConsultaImpl<T> implements Consulta<T> {
 		}
 		logger.info("finalizando o percorrerCamposSelect");
 		return listaAux;
+	}
+
+	@Override
+	public T create(Class<T> clazz, T t) {
+		logger.info("Executando a consulta create");
+
+		String nomeClasse = clazz.getSimpleName().toLowerCase();
+		String sql = "INSERT INTO " + nomeClasse;
+		String sqlDeclaredValues = " (";
+		String values = ") VALUES (";
+		String sqlFinal = "";
+		try {
+			for (Field field : t.getClass().getDeclaredFields()) {
+				field.setAccessible(true);
+				if ("id".equals(field.getName())) {
+					logger.info("id ignorado");
+					continue;
+				}
+				if (field.get(t) != null) {
+					field.setAccessible(true);
+					sqlDeclaredValues += field.getName().toLowerCase() + ", ";
+					values += "?, ";
+				}
+			}
+			sqlFinal = sql + sqlDeclaredValues.substring(0, sqlDeclaredValues.length() - 2)
+					+ values.substring(0, values.length() - 2) + ")";
+
+			logger.info("SQL: \n\t" + sqlFinal);
+			PreparedStatement ps = null;
+			try {
+				ps = conexao.prepareStatement(sqlFinal);
+				int i = 1;
+				for (Field field : t.getClass().getDeclaredFields()) {
+					field.setAccessible(true);
+					if ("id".equals(field.getName())) {
+						logger.info("id ignorado");
+						continue;
+					}
+					if (field.get(t) != null) {
+						ps.setObject(i, field.get(t));
+						i++;
+					}
+				}
+
+				ps.executeUpdate();
+			} catch (SQLException e) {
+				logger.info("Erro ao criar o PreparedStatement: " + e.getLocalizedMessage());
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			logger.info("Erro ao acessar o objeto: " + e.getLocalizedMessage());
+		} finally {
+
+		}
+		return null;
 	}
 }

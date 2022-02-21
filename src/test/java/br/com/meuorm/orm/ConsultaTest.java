@@ -9,43 +9,61 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import br.com.sharingan.ddd.orm.Consulta;
+import br.com.sharingan.ddd.orm.conexao.ConexaoFactory;
 import br.com.sharingan.noorm.Model.Pessoa;
 import br.com.sharingan.orm.ConsultaImpl;
-import br.com.sharingan.orm.conexao.ConexaoFactory;
+import br.com.sharingan.orm.conexao.ConexaoFactoryImpl;
 
 public class ConsultaTest {
 
-    @Test
-    public void testFindAll() throws SQLException, InstantiationException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Test
+	public void testFindAll() throws SQLException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
-        ConexaoFactory connection = new ConexaoFactory();
+		ConexaoFactory connection = new ConexaoFactoryImpl();
 
-        Consulta<Pessoa> consulta = new ConsultaImpl<>(connection);
+		Consulta<Pessoa> consulta = new ConsultaImpl<>(connection);
 
-        List<Pessoa> pessoas = consulta.findAll(Pessoa.class);
+		List<Pessoa> pessoas = consulta.findAll(Pessoa.class);
 
-        pessoas.forEach(pessoa -> {
-            System.out.println(pessoa.getNome());
-            System.out.println(pessoa.getId());
-        });
+		pessoas.forEach(pessoa -> {
+			System.out.println(pessoa.getNome());
+			System.out.println(pessoa.getId());
+		});
 
-        Assert.assertEquals(ArrayList.class, pessoas.getClass());
-        Assert.assertEquals(2, pessoas.size());
-    }
+		Assert.assertEquals(ArrayList.class, pessoas.getClass());
+		Assert.assertEquals(2, pessoas.size());
+	}
 
-    @Test
-    public void testFindById() throws SQLException, InstantiationException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Test
+	public void testFindById() throws SQLException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
-        ConexaoFactory connection = new ConexaoFactory();
+		ConexaoFactory connection = new ConexaoFactoryImpl();
 
-        Consulta<Pessoa> consulta = new ConsultaImpl<Pessoa>(connection);
+		Consulta<Pessoa> consulta = new ConsultaImpl<Pessoa>(connection);
 
-        Pessoa pessoa = consulta.findById(Pessoa.class, 1L);
+		Pessoa pessoa = consulta.findById(Pessoa.class, 1L);
 
-        Assert.assertEquals("pessoa", pessoa.getNome());
-        Assert.assertEquals(Long.valueOf(1), pessoa.getId());
-    }
+		Assert.assertEquals("pessoa", pessoa.getNome());
+		Assert.assertEquals(Long.valueOf(1), pessoa.getId());
+	}
+
+	@Test
+	public void testCreate() throws IllegalArgumentException, IllegalAccessException {
+
+		ConexaoFactory connection = new ConexaoFactoryImpl();
+
+		Consulta<Pessoa> query = new ConsultaImpl<>(connection);
+
+		Pessoa pessoa = new Pessoa();
+		pessoa.setId(1L);
+		pessoa.setNome("Pessoa2");
+
+		Pessoa save = query.create(Pessoa.class, pessoa);
+
+		Assert.assertEquals("Pessoa2", save.getNome());
+
+	}
 
 }

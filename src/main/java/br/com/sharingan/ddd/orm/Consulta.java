@@ -6,10 +6,11 @@ import java.util.List;
 
 public interface Consulta<T> {
 
-	List<T> findAll(Class<T> t)
-			throws SQLException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException;
+	List<T> findAll(Class<T> clazz) throws SQLException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException;
 
-	T findById(Class<T> t, Long id) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+	T findById(Class<T> clazz, Long id) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, SecurityException;
+
+	T create(Class<T> clazz, T t) throws IllegalArgumentException, IllegalAccessException;
 }

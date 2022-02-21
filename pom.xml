@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.meuorm</groupId>
 	<artifactId>meu-orm</artifactId>
-	<version>0.2.1</version>
+	<version>0.3.1</version>
 	<name>ORM Sharingan</name>
 	<description>Projeto de Teste para criação de um orm em Java</description>
 
