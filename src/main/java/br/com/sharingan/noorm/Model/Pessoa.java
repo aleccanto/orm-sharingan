@@ -1,6 +1,8 @@
-package br.com.sharingan.noorm.Model;
+package br.com.sharingan.noorm.model;
 
-public class Pessoa {
+import br.com.sharingan.ddd.orm.entidade.Entidade;
+
+public class Pessoa implements Entidade {
 
     private Long id;
 

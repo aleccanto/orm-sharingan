@@ -1,0 +1,4 @@
+CREATE TABLE pessoa (
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(200)
+);
