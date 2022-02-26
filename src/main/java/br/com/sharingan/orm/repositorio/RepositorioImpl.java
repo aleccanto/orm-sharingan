@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 import br.com.sharingan.ddd.orm.Repositorio;
 import br.com.sharingan.ddd.orm.conexao.ConexaoFactory;
 import br.com.sharingan.ddd.orm.entidade.Entidade;
+import br.com.sharingan.ddd.orm.sql.GeradorSql;
+import br.com.sharingan.noorm.model.Pessoa;
+import br.com.sharingan.orm.conexao.ConexaoFactoryImpl;
 
 public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 
@@ -21,10 +24,13 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 
 	private final Connection conexao;
 
+	private final GeradorSql<T> geradorSql;
+
 	private final String ERRO_AO_ACESSAR_O_OBJETO = "Erro ao acessar o objeto ";
 
-	public RepositorioImpl(ConexaoFactory connection) {
+	public RepositorioImpl(ConexaoFactory connection, GeradorSql<T> geradorSql) {
 		this.conexao = connection.getConnection();
+		this.geradorSql = geradorSql;
 	}
 
 	@Override
@@ -207,12 +213,37 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 		return null;
 	}
 
-	private void closePreparedStatement(PreparedStatement ps) {
+	@Override
+	public T update(Class<T> clazz, T t) throws IllegalArgumentException, IllegalAccessException {
+		logger.info("Executando update na classe " + clazz.getSimpleName());
+		String sqlFInal = "";
+		PreparedStatement ps = null;
 		try {
-			ps.close();
-		} catch (SQLException e) {
-			logger.info("Falha ao fechar a conexão: " + e);
+			sqlFInal = geradorSql.gerarUpdate(t);
+			if ("".equals(sqlFInal)) {
+				return this.create(clazz, t);
+			} else {
+				int i = 1;
+				ps = conexao.prepareStatement(sqlFInal);
+				for (Field field : t.getClass().getDeclaredFields()) {
+					field.setAccessible(true);
+					if ("id".equals(field.getName())) {
+						continue;
+					}
+					if (field.get(t) != null) {
+						ps.setObject(i, field.get(t));
+						i++;
+					}
+				}
+				ps.executeUpdate();
+				return t;
+			}
+		} catch (Exception e) {
+			logger.info("Ocorreu um erro ao gerar o sql: " + e);
+		} finally {
+			closePreparedStatement(ps);
 		}
+		return null;
 	}
 
 	@Override
@@ -230,33 +261,16 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 			logger.info("Erro: " + e);
 		}
 		return false;
-
 	}
 
-	@Override
-	public T update(Class<T> clazz, T t) throws IllegalArgumentException, IllegalAccessException {
-		logger.info("Executando update na classe " + clazz.getSimpleName());
-		String className = clazz.getSimpleName().toLowerCase();
-		String sqlUpdate = "UPDATE " + className + " SET ";
-		String sqlWhere = "WHERE id = " + t.getId();
-		String sqlFInal = "";
+	private void closePreparedStatement(PreparedStatement ps) {
 		try {
-			for (Field field : clazz.getDeclaredFields()) {
-				field.setAccessible(true);
-				if (t.getId() == null) {
-					logger.info("Id nulo, criando o objeto: " + className);
-					return this.create(clazz, t);
-				}
-				if (field.get(t) != null && !"id".equals(field.getName())) {
-					sqlUpdate += field.getName() + " = ?, ";
-				}
+			if (Objects.nonNull(ps)) {
+				ps.close();
 			}
-			sqlFInal = sqlUpdate.substring(0, sqlUpdate.length() - 2) + " " + sqlWhere;
-			logger.info("SQLFINAL: " + sqlFInal);
-		} catch (Exception e) {
-			// TODO: handle exception
+		} catch (SQLException e) {
+			logger.info("Falha ao fechar a conexão: " + e);
 		}
-		return null;
 	}
 
 }
