@@ -8,7 +8,7 @@ import br.com.sharingan.ddd.orm.sql.GeradorSql;
 
 public class GeradorSqlImpl<T extends Entidade> implements GeradorSql<T> {
 
-    private final Logger logger = Logger.getLogger(GeradorSql.class.getName());
+    private final Logger logger = Logger.getLogger(GeradorSqlImpl.class.getName());
 
     private final Class<T> clazz;
 
@@ -17,15 +17,45 @@ public class GeradorSqlImpl<T extends Entidade> implements GeradorSql<T> {
     }
 
     @Override
-    public String gerarSelect(Class<T> clazz, T t) {
-        // TODO Auto-generated method stub
-        return null;
+    public String gerarSelectTodos() {
+        String classeName = clazz.getSimpleName().toLowerCase();
+        String sql = "SELECT * FROM " + classeName;
+        logger.info("SQL: \n\t" + sql);
+        return sql;
     }
 
     @Override
-    public String gerarInsert(Class<T> clazz, T t) {
-        // TODO Auto-generated method stub
-        return null;
+    public String gerarSelectFindById(Long id) {
+        String classeName = clazz.getSimpleName().toLowerCase();
+        String sql = "SELECT * FROM " + classeName + " WHERE id = ?";
+        logger.info("SQL: \n\t" + sql);
+        return sql;
+    }
+
+    @Override
+    public String gerarInsert(T t) throws IllegalArgumentException, IllegalAccessException {
+        String nomeClasse = clazz.getSimpleName().toLowerCase();
+        String sql = "INSERT INTO " + nomeClasse;
+        String sqlDeclaredValues = " (";
+        String values = ") VALUES (";
+        String sqlFinal = "";
+
+        for (Field field : t.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            if ("id".equals(field.getName())) {
+                logger.info("id ignorado");
+                continue;
+            }
+            if (field.get(t) != null) {
+                sqlDeclaredValues += field.getName().toLowerCase() + ", ";
+                values += "?, ";
+            }
+        }
+        sqlFinal = sql + sqlDeclaredValues.substring(0, sqlDeclaredValues.length() - 2)
+                + values.substring(0, values.length() - 2) + ")";
+
+        logger.info("SQL: \n\t" + sqlFinal);
+        return sqlFinal;
     }
 
     @Override
@@ -48,6 +78,19 @@ public class GeradorSqlImpl<T extends Entidade> implements GeradorSql<T> {
         logger.info("SQLFINAL: " + sqlFInal);
 
         return sqlFInal;
+    }
+
+    public String deleteAll() {
+        String sqlDelete = "DELETE FROM " + clazz.getSimpleName().toLowerCase();
+        String sqlWhere = "WHERE id > 0";
+        String sqlFinal = sqlDelete + " " + sqlWhere;
+        logger.info("SQL: \n\t" + sqlFinal);
+        return sqlFinal;
+    }
+
+    @Override
+    public Class<T> classeUsada() {
+        return clazz;
     }
 
 }

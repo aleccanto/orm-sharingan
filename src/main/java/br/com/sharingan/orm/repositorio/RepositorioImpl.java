@@ -15,8 +15,6 @@ import br.com.sharingan.ddd.orm.Repositorio;
 import br.com.sharingan.ddd.orm.conexao.ConexaoFactory;
 import br.com.sharingan.ddd.orm.entidade.Entidade;
 import br.com.sharingan.ddd.orm.sql.GeradorSql;
-import br.com.sharingan.noorm.model.Pessoa;
-import br.com.sharingan.orm.conexao.ConexaoFactoryImpl;
 
 public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 
@@ -26,7 +24,9 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 
 	private final GeradorSql<T> geradorSql;
 
-	private final String ERRO_AO_ACESSAR_O_OBJETO = "Erro ao acessar o objeto ";
+	private static final String ERRO_AO_ACESSAR_O_OBJETO = "Erro ao acessar o objeto ";
+
+	private static final String ERRO_AO_CRIAR_O_PREPAREDSTATEMENT = "Erro ao criar o PreparedStatement: ";
 
 	public RepositorioImpl(ConexaoFactory connection, GeradorSql<T> geradorSql) {
 		this.conexao = connection.getConnection();
@@ -34,34 +34,29 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 	}
 
 	@Override
-	public List<T> findAll(Class<T> t) {
+	public List<T> findAll() {
 		logger.info("Executando a consulta findAll");
-		String classeName = t.getSimpleName();
-		String sql = "SELECT * FROM " + classeName;
+		String sql = geradorSql.gerarSelectTodos();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		logger.info("SQL: \n\t" + sql);
 		try {
 			stmt = conexao.prepareStatement(sql);
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {
-			logger.info("Erro ao criar o PreparedStatement: " + e.getLocalizedMessage());
+			logger.info(ERRO_AO_CRIAR_O_PREPAREDSTATEMENT + e.getLocalizedMessage());
 		}
 		List<T> lista = new ArrayList<>();
 		if (Objects.nonNull(stmt) && Objects.nonNull(rs)) {
-			lista.addAll(mapearEntidade(t, stmt, rs));
+			lista.addAll(mapearEntidade(geradorSql.classeUsada(), stmt, rs));
 		}
 		logger.info("finalizando a consulta findAll");
 		return lista;
 	}
 
 	@Override
-	public T findById(Class<T> t, Long id) throws InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, SecurityException {
+	public T findById(Long id) {
 		logger.info("Executando a consulta findById");
-		String classeName = t.getSimpleName();
-		String sql = "SELECT * FROM " + classeName + " WHERE id = ?";
-		logger.info("SQL: \n\t" + sql);
+		String sql = geradorSql.gerarSelectFindById(id);
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
@@ -69,16 +64,117 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 			stmt.setLong(1, id);
 			rs = stmt.executeQuery();
 		} catch (SQLException e) {
-			logger.info("Erro ao criar o PreparedStatement: " + e.getLocalizedMessage());
+			logger.info(ERRO_AO_CRIAR_O_PREPAREDSTATEMENT + e.getLocalizedMessage());
 		}
 		List<T> entidade = null;
 		if (Objects.nonNull(stmt) && Objects.nonNull(rs)) {
-			entidade = mapearEntidade(t, stmt, rs);
+			entidade = mapearEntidade(geradorSql.classeUsada(), stmt, rs);
 		} else {
 			return null;
 		}
 		logger.info("finalizando a consulta findById");
 		return entidade.isEmpty() ? null : entidade.get(0);
+	}
+
+	@Override
+	public T create(T t) {
+		logger.info("Executando a consulta create");
+		String sqlFinal = "";
+		try {
+			sqlFinal = geradorSql.gerarInsert(t);
+			PreparedStatement ps = null;
+			try {
+				ps = conexao.prepareStatement(sqlFinal, PreparedStatement.RETURN_GENERATED_KEYS);
+				int i = 1;
+				for (Field field : t.getClass().getDeclaredFields()) {
+					field.setAccessible(true);
+					if ("id".equals(field.getName())) {
+						continue;
+					}
+					if (field.get(t) != null) {
+						ps.setObject(i, field.get(t));
+						i++;
+					}
+				}
+
+				ps.executeUpdate();
+				ResultSet rs = ps.getGeneratedKeys();
+				Long id = null;
+				while (rs.next()) {
+					id = rs.getLong("id");
+				}
+				Field field = geradorSql.classeUsada().getDeclaredField("id");
+				field.setAccessible(true);
+				field.set(t, id);
+				return t;
+
+			} catch (SQLException | NoSuchFieldException | SecurityException e) {
+				logger.info(ERRO_AO_CRIAR_O_PREPAREDSTATEMENT + e);
+			} finally {
+				closePreparedStatement(ps);
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			logger.info("Erro ao acessar o objeto: " + e.getLocalizedMessage());
+		} finally {
+
+		}
+		return null;
+	}
+
+	@Override
+	public T update(T t) {
+		String sqlFInal = "";
+		PreparedStatement ps = null;
+		try {
+			sqlFInal = geradorSql.gerarUpdate(t);
+			if ("".equals(sqlFInal)) {
+				return this.create(t);
+			} else {
+				int i = 1;
+				ps = conexao.prepareStatement(sqlFInal);
+				for (Field field : t.getClass().getDeclaredFields()) {
+					field.setAccessible(true);
+					if ("id".equals(field.getName())) {
+						continue;
+					}
+					if (field.get(t) != null) {
+						ps.setObject(i, field.get(t));
+						i++;
+					}
+				}
+				ps.executeUpdate();
+				return t;
+			}
+		} catch (Exception e) {
+			logger.info("Ocorreu um erro ao gerar o sql: " + e);
+		} finally {
+			closePreparedStatement(ps);
+		}
+		return null;
+	}
+
+	@Override
+	public Boolean deleteAll() {
+		String sqlFinal = geradorSql.deleteAll();
+		logger.info("SQL: \n\t" + sqlFinal);
+
+		try (PreparedStatement ps = conexao.prepareStatement(sqlFinal);) {
+			ps.executeUpdate();
+			return true;
+		} catch (Exception e) {
+			logger.info("Erro: " + e);
+		}
+		return false;
+	}
+
+	private void closePreparedStatement(PreparedStatement ps) {
+		try {
+			if (Objects.nonNull(ps)) {
+				ps.close();
+			}
+		} catch (SQLException e) {
+			logger.info("Falha ao fechar a conexão: " + e);
+		}
 	}
 
 	private List<T> mapearEntidade(Class<T> t, PreparedStatement stmt, ResultSet rs) {
@@ -147,130 +243,6 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 		}
 		logger.info("finalizando o percorrerCamposSelect");
 		return listaAux;
-	}
-
-	@Override
-	public T create(Class<T> clazz, T t) {
-		logger.info("Executando a consulta create");
-
-		String nomeClasse = clazz.getSimpleName().toLowerCase();
-		String sql = "INSERT INTO " + nomeClasse;
-		String sqlDeclaredValues = " (";
-		String values = ") VALUES (";
-		String sqlFinal = "";
-		try {
-			for (Field field : t.getClass().getDeclaredFields()) {
-				field.setAccessible(true);
-				if ("id".equals(field.getName())) {
-					logger.info("id ignorado");
-					continue;
-				}
-				if (field.get(t) != null) {
-					sqlDeclaredValues += field.getName().toLowerCase() + ", ";
-					values += "?, ";
-				}
-			}
-			sqlFinal = sql + sqlDeclaredValues.substring(0, sqlDeclaredValues.length() - 2)
-					+ values.substring(0, values.length() - 2) + ")";
-
-			logger.info("SQL: \n\t" + sqlFinal);
-			PreparedStatement ps = null;
-			try {
-				ps = conexao.prepareStatement(sqlFinal, PreparedStatement.RETURN_GENERATED_KEYS);
-				int i = 1;
-				for (Field field : t.getClass().getDeclaredFields()) {
-					field.setAccessible(true);
-					if ("id".equals(field.getName())) {
-						continue;
-					}
-					if (field.get(t) != null) {
-						ps.setObject(i, field.get(t));
-						i++;
-					}
-				}
-
-				ps.executeUpdate();
-				ResultSet rs = ps.getGeneratedKeys();
-				Long id = null;
-				while (rs.next()) {
-					id = rs.getLong("id");
-				}
-				Field field = clazz.getDeclaredField("id");
-				field.setAccessible(true);
-				field.set(t, id);
-				return t;
-
-			} catch (SQLException | NoSuchFieldException | SecurityException e) {
-				logger.info("Erro ao criar o PreparedStatement: " + e);
-			} finally {
-				closePreparedStatement(ps);
-			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			logger.info("Erro ao acessar o objeto: " + e.getLocalizedMessage());
-		} finally {
-
-		}
-		return null;
-	}
-
-	@Override
-	public T update(Class<T> clazz, T t) throws IllegalArgumentException, IllegalAccessException {
-		logger.info("Executando update na classe " + clazz.getSimpleName());
-		String sqlFInal = "";
-		PreparedStatement ps = null;
-		try {
-			sqlFInal = geradorSql.gerarUpdate(t);
-			if ("".equals(sqlFInal)) {
-				return this.create(clazz, t);
-			} else {
-				int i = 1;
-				ps = conexao.prepareStatement(sqlFInal);
-				for (Field field : t.getClass().getDeclaredFields()) {
-					field.setAccessible(true);
-					if ("id".equals(field.getName())) {
-						continue;
-					}
-					if (field.get(t) != null) {
-						ps.setObject(i, field.get(t));
-						i++;
-					}
-				}
-				ps.executeUpdate();
-				return t;
-			}
-		} catch (Exception e) {
-			logger.info("Ocorreu um erro ao gerar o sql: " + e);
-		} finally {
-			closePreparedStatement(ps);
-		}
-		return null;
-	}
-
-	@Override
-	public Boolean deleteAll(Class<T> clazz) {
-
-		String sqlDelete = "DELETE FROM " + clazz.getSimpleName().toLowerCase();
-		String sqlWhere = "WHERE id > 0";
-		String sqlFinal = sqlDelete + " " + sqlWhere;
-		logger.info("SQL: \n\t" + sqlFinal);
-
-		try (PreparedStatement ps = conexao.prepareStatement(sqlFinal);) {
-			ps.executeQuery();
-			return true;
-		} catch (Exception e) {
-			logger.info("Erro: " + e);
-		}
-		return false;
-	}
-
-	private void closePreparedStatement(PreparedStatement ps) {
-		try {
-			if (Objects.nonNull(ps)) {
-				ps.close();
-			}
-		} catch (SQLException e) {
-			logger.info("Falha ao fechar a conexão: " + e);
-		}
 	}
 
 }

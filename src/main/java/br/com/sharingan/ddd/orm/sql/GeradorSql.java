@@ -4,10 +4,16 @@ import br.com.sharingan.ddd.orm.entidade.Entidade;
 
 public interface GeradorSql<T extends Entidade> {
 
-    String gerarSelect(Class<T> clazz, T t);
+    Class<T> classeUsada();
 
-    String gerarInsert(Class<T> clazz, T t);
+    String gerarSelectTodos();
+
+    String gerarSelectFindById(Long id);
+
+    String gerarInsert(T t) throws IllegalArgumentException, IllegalAccessException;
 
     String gerarUpdate(T t) throws IllegalArgumentException, IllegalAccessException;
+
+    String deleteAll();
 
 }

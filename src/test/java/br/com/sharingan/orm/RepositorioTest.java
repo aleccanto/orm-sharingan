@@ -23,9 +23,9 @@ public class RepositorioTest {
 	public void setUp() {
 		ConexaoFactory connection = new ConexaoFactoryImpl();
 
-		GeradorSql<Pessoa> geradorSql = null;
+		GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-		new RepositorioImpl<Pessoa>(connection, geradorSql).deleteAll(Pessoa.class);
+		new RepositorioImpl<Pessoa>(connection, geradorSql).deleteAll();
 	}
 
 	@Test
@@ -44,10 +44,10 @@ public class RepositorioTest {
 		pessoa1.setNome("Nome1");
 		pessoa2.setNome("Nome2");
 
-		repositorio.create(Pessoa.class, pessoa1);
-		repositorio.create(Pessoa.class, pessoa2);
+		repositorio.create(pessoa1);
+		repositorio.create(pessoa2);
 
-		List<Pessoa> pessoas = repositorio.findAll(Pessoa.class);
+		List<Pessoa> pessoas = repositorio.findAll();
 
 		pessoas.forEach(pessoa -> {
 			System.out.println(pessoa.getNome());
@@ -72,9 +72,9 @@ public class RepositorioTest {
 		;
 		pessoa.setNome("pessoa");
 
-		repositorio.create(Pessoa.class, pessoa);
+		repositorio.create(pessoa);
 
-		Pessoa pessoaSave = repositorio.findById(Pessoa.class, pessoa.getId());
+		Pessoa pessoaSave = repositorio.findById(pessoa.getId());
 
 		Assert.assertEquals("pessoa", pessoaSave.getNome());
 		Assert.assertNotNull(pessoaSave.getId());
@@ -93,7 +93,7 @@ public class RepositorioTest {
 		pessoa.setId(1L);
 		pessoa.setNome("Pessoa2");
 
-		Pessoa save = query.create(Pessoa.class, pessoa);
+		Pessoa save = query.create(pessoa);
 
 		Assert.assertEquals("Pessoa2", save.getNome());
 		Assert.assertNotNull(save.getId());
@@ -108,9 +108,9 @@ public class RepositorioTest {
 
 		Repositorio<Pessoa> query = new RepositorioImpl<>(connection, geradorSql);
 
-		Boolean deletou = query.deleteAll(Pessoa.class);
+		Boolean deletou = query.deleteAll();
 
-		List<Pessoa> pessoas = query.findAll(Pessoa.class);
+		List<Pessoa> pessoas = query.findAll();
 
 		Assert.assertNotNull(deletou);
 		Assert.assertEquals(0, pessoas.size());
@@ -128,11 +128,11 @@ public class RepositorioTest {
 		pessoa.setId(1L);
 		pessoa.setNome("Pessoa2");
 
-		Pessoa save = query.create(Pessoa.class, pessoa);
+		Pessoa save = query.create(pessoa);
 
 		save.setNome("Outro nome");
 
-		Pessoa update = query.update(Pessoa.class, save);
+		Pessoa update = query.update(save);
 
 		Assert.assertEquals("Outro nome", update.getNome());
 		Assert.assertEquals(save.getId(), update.getId());
