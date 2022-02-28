@@ -1,4 +1,4 @@
-package br.com.sharingan.orm.conexao;
+package br.com.sharingan.app.orm.conexao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

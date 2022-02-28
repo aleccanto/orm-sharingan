@@ -1,4 +1,4 @@
-package br.com.sharingan.noorm.model;
+package br.com.sharingan.orm.model;
 
 import br.com.sharingan.ddd.orm.entidade.Entidade;
 

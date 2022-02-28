@@ -1,4 +1,4 @@
-package br.com.sharingan.orm.repositorio;
+package br.com.sharingan.app.orm.repositorio;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

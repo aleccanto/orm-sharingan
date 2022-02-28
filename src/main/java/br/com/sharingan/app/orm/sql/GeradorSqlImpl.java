@@ -1,4 +1,4 @@
-package br.com.sharingan.orm.sql;
+package br.com.sharingan.app.orm.sql;
 
 import java.lang.reflect.Field;
 import java.util.logging.Logger;

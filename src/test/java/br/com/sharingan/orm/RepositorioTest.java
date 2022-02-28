@@ -9,13 +9,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.com.sharingan.app.orm.conexao.ConexaoFactoryImpl;
+import br.com.sharingan.app.orm.repositorio.RepositorioImpl;
+import br.com.sharingan.app.orm.sql.GeradorSqlImpl;
 import br.com.sharingan.ddd.orm.Repositorio;
 import br.com.sharingan.ddd.orm.conexao.ConexaoFactory;
 import br.com.sharingan.ddd.orm.sql.GeradorSql;
-import br.com.sharingan.noorm.model.Pessoa;
-import br.com.sharingan.orm.conexao.ConexaoFactoryImpl;
-import br.com.sharingan.orm.repositorio.RepositorioImpl;
-import br.com.sharingan.orm.sql.GeradorSqlImpl;
+import br.com.sharingan.orm.model.Pessoa;
 
 public class RepositorioTest {
 

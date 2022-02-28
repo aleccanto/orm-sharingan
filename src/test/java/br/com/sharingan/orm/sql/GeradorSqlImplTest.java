@@ -1,14 +1,18 @@
 package br.com.sharingan.orm.sql;
 
+import java.math.BigDecimal;
+
 import org.junit.Assert;
 import org.junit.Test;
 
+import br.com.sharingan.app.orm.sql.GeradorSqlImpl;
 import br.com.sharingan.ddd.orm.sql.GeradorSql;
-import br.com.sharingan.noorm.model.Pessoa;
+import br.com.sharingan.orm.model.Carro;
+import br.com.sharingan.orm.model.Pessoa;
 
 public class GeradorSqlImplTest {
     @Test
-    public void testGerarInsert() throws IllegalArgumentException, IllegalAccessException {
+    public void testGerarInsertPessoa() throws IllegalArgumentException, IllegalAccessException {
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
         Pessoa pessoa = new Pessoa();
@@ -31,7 +35,7 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarSelectById() {
+    public void testGerarSelectByIdPessoa() {
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
@@ -42,7 +46,7 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarUpdate() throws IllegalArgumentException, IllegalAccessException {
+    public void testGerarUpdatePessoa() throws IllegalArgumentException, IllegalAccessException {
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
         Pessoa pessoa = new Pessoa();
@@ -55,11 +59,51 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarDeleteAll() {
+    public void testGerarDeleteAllPessoa() {
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
         String sqlGerado = geradorSql.deleteAll();
 
         Assert.assertEquals("DELETE FROM pessoa WHERE id > 0", sqlGerado);
+    }
+
+    @Test
+    public void testGerarSelectAllCarro() {
+
+        GeradorSql<Carro> geradorSql = new GeradorSqlImpl<>(Carro.class);
+
+        String sqlGerado = geradorSql.gerarSelectTodos();
+
+        Assert.assertEquals("SELECT * FROM carro", sqlGerado);
+
+    }
+
+    @Test
+    public void testGerarInsertCarro() throws IllegalArgumentException, IllegalAccessException {
+        GeradorSql<Carro> geradorSql = new GeradorSqlImpl<>(Carro.class);
+
+        Carro carro = new Carro();
+        carro.setNome("Carro");
+        carro.setPreco(BigDecimal.valueOf(40000));
+        carro.setPeso(500000D);
+
+        String sqlGerado = geradorSql.gerarInsert(carro);
+
+        Assert.assertEquals("INSERT INTO carro (nome, preco, peso) VALUES (?, ?, ?)", sqlGerado);
+    }
+
+    @Test
+    public void testGerarUpdateCarro() throws IllegalArgumentException, IllegalAccessException {
+        GeradorSql<Carro> geradorSql = new GeradorSqlImpl<>(Carro.class);
+
+        Carro carro = new Carro();
+        carro.setId(1L);
+        carro.setNome("Carro");
+        carro.setPreco(BigDecimal.valueOf(40000));
+        carro.setPeso(500000D);
+
+        String sqlGerado = geradorSql.gerarUpdate(carro);
+
+        Assert.assertEquals("UPDATE carro SET nome = ?, preco = ?, peso = ? WHERE id = 1", sqlGerado);
     }
 }
