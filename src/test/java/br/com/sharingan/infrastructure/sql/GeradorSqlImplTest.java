@@ -1,14 +1,14 @@
-package br.com.sharingan.orm.sql;
+package br.com.sharingan.infrastructure.sql;
 
 import java.math.BigDecimal;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.com.sharingan.app.orm.sql.GeradorSqlImpl;
-import br.com.sharingan.ddd.orm.sql.GeradorSql;
-import br.com.sharingan.orm.model.Carro;
-import br.com.sharingan.orm.model.Pessoa;
+import br.com.sharingan.infrastructure.orm.sql.GeradorSqlImpl;
+import br.com.sharingan.domain.orm.sql.GeradorSql;
+import br.com.sharingan.infrastructure.model.Carro;
+import br.com.sharingan.infrastructure.model.Pessoa;
 
 public class GeradorSqlImplTest {
     @Test
@@ -35,11 +35,11 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarSelectByIdPessoa() {
+    public void testGerarSelectPorIdPessoa() {
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-        String sqlGerado = geradorSql.gerarSelectFindById(1L);
+        String sqlGerado = geradorSql.gerarSelectPorId(1L);
 
         Assert.assertEquals("SELECT * FROM pessoa WHERE id = ?", sqlGerado);
 
@@ -59,10 +59,10 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarDeleteAllPessoa() {
+    public void testGerarDeleteTodosPessoa() {
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-        String sqlGerado = geradorSql.deleteAll();
+        String sqlGerado = geradorSql.gerarDeleteTodos();
 
         Assert.assertEquals("DELETE FROM pessoa WHERE id > 0", sqlGerado);
     }

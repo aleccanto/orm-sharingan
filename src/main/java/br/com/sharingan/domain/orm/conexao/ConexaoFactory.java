@@ -1,4 +1,4 @@
-package br.com.sharingan.ddd.orm.conexao;
+package br.com.sharingan.domain.orm.conexao;
 
 import java.sql.Connection;
 

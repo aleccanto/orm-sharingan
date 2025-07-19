@@ -1,4 +1,4 @@
-package br.com.sharingan.ddd.orm.entidade;
+package br.com.sharingan.domain.orm.entidade;
 
 public interface Entidade {
 

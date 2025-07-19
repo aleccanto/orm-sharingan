@@ -1,9 +1,9 @@
-package br.com.sharingan.orm.model;
+package br.com.sharingan.infrastructure.model;
 
 import java.math.BigDecimal;
 import java.util.Currency;
 
-import br.com.sharingan.ddd.orm.entidade.Entidade;
+import br.com.sharingan.domain.orm.entidade.Entidade;
 
 public class Carro implements Entidade {
 
