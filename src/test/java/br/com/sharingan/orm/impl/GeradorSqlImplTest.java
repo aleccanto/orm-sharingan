@@ -21,7 +21,7 @@ public class GeradorSqlImplTest {
 
         String sqlGerado = geradorSql.gerarInsert(pessoa);
 
-        Assert.assertEquals("INSERT INTO pessoa (nome) VALUES (?)", sqlGerado);
+        Assert.assertEquals("INSERT INTO pessoas (nome) VALUES (?)", sqlGerado);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class GeradorSqlImplTest {
 
         String sqlGerado = geradorSql.gerarSelectTodos();
 
-        Assert.assertEquals("SELECT * FROM pessoa", sqlGerado);
+        Assert.assertEquals("SELECT * FROM pessoas", sqlGerado);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class GeradorSqlImplTest {
 
         String sqlGerado = geradorSql.gerarSelectPorId(1L);
 
-        Assert.assertEquals("SELECT * FROM pessoa WHERE id = ?", sqlGerado);
+        Assert.assertEquals("SELECT * FROM pessoas WHERE id = ?", sqlGerado);
 
     }
 
@@ -55,7 +55,7 @@ public class GeradorSqlImplTest {
 
         String sqlGerado = geradorSql.gerarUpdate(pessoa);
 
-        Assert.assertEquals("UPDATE pessoa SET nome = ? WHERE id = 1", sqlGerado);
+        Assert.assertEquals("UPDATE pessoas SET nome = ? WHERE id = 1", sqlGerado);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class GeradorSqlImplTest {
 
         String sqlGerado = geradorSql.gerarDeleteTodos();
 
-        Assert.assertEquals("DELETE FROM pessoa WHERE id > 0", sqlGerado);
+        Assert.assertEquals("DELETE FROM pessoas WHERE id > 0", sqlGerado);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class GeradorSqlImplTest {
 
         String sqlGerado = geradorSql.gerarSelectTodos();
 
-        Assert.assertEquals("SELECT * FROM carro", sqlGerado);
+        Assert.assertEquals("SELECT * FROM carros", sqlGerado);
 
     }
 
@@ -89,7 +89,7 @@ public class GeradorSqlImplTest {
 
         String sqlGerado = geradorSql.gerarInsert(carro);
 
-        Assert.assertEquals("INSERT INTO carro (nome, preco, peso) VALUES (?, ?, ?)", sqlGerado);
+        Assert.assertEquals("INSERT INTO carros (nome, preco, peso) VALUES (?, ?, ?)", sqlGerado);
     }
 
     @Test
@@ -104,6 +104,6 @@ public class GeradorSqlImplTest {
 
         String sqlGerado = geradorSql.gerarUpdate(carro);
 
-        Assert.assertEquals("UPDATE carro SET nome = ?, preco = ?, peso = ? WHERE id = 1", sqlGerado);
+        Assert.assertEquals("UPDATE carros SET nome = ?, preco = ?, peso = ? WHERE id = 1", sqlGerado);
     }
 }

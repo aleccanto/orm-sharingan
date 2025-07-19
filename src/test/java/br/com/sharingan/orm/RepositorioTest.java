@@ -78,6 +78,7 @@ public class RepositorioTest {
             System.out.println(pessoa.getId());
         });
 
+        Assert.assertNotNull(pessoas);
         Assert.assertEquals(ArrayList.class, pessoas.getClass());
         Assert.assertEquals(2, pessoas.size());
     }
@@ -100,6 +101,7 @@ public class RepositorioTest {
 
         Pessoa pessoaSave = repositorio.buscarPorId(pessoa.getId());
 
+        Assert.assertNotNull(pessoaSave);
         Assert.assertEquals("pessoa", pessoaSave.getNome());
         Assert.assertNotNull(pessoaSave.getId());
     }
@@ -119,6 +121,7 @@ public class RepositorioTest {
 
         Pessoa save = query.criar(pessoa);
 
+        Assert.assertNotNull(save);
         Assert.assertEquals("Pessoa2", save.getNome());
         Assert.assertNotNull(save.getId());
     }
@@ -158,6 +161,7 @@ public class RepositorioTest {
 
         Pessoa update = query.atualizar(save);
 
+        Assert.assertNotNull(update);
         Assert.assertEquals("Outro nome", update.getNome());
         Assert.assertEquals(save.getId(), update.getId());
 
