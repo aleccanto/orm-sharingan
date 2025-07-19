@@ -30,8 +30,8 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 
     private static final String ERRO_AO_CRIAR_O_PREPAREDSTATEMENT = "Erro ao criar o PreparedStatement: ";
 
-    public RepositorioImpl(ConexaoFactory connection, GeradorSql<T> geradorSql) {
-        this.conexao = connection.obterConexao();
+    public RepositorioImpl(ConexaoFactory conexaoFactory, GeradorSql<T> geradorSql) {
+        this.conexao = conexaoFactory.obterConexao();
         this.geradorSql = geradorSql;
     }
 
@@ -112,8 +112,8 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
             } catch (SQLException | NoSuchFieldException | SecurityException e) {
                 LOGGER.info(ERRO_AO_CRIAR_O_PREPAREDSTATEMENT + e);
             } finally {
-                closePreparedStatement(ps);
-            }
+            fecharPreparedStatement(ps);
+        }
         } catch (IllegalArgumentException | IllegalAccessException e) {
             LOGGER.info("Erro ao acessar o objeto: " + e.getLocalizedMessage());
         } finally {
@@ -149,7 +149,7 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
         } catch (Exception e) {
             LOGGER.info("Ocorreu um erro ao gerar o sql: " + e);
         } finally {
-            closePreparedStatement(ps);
+            fecharPreparedStatement(ps);
         }
         return null;
     }
@@ -168,7 +168,7 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
         return false;
     }
 
-    private void closePreparedStatement(PreparedStatement ps) {
+    private void fecharPreparedStatement(PreparedStatement ps) {
         try {
             if (Objects.nonNull(ps)) {
                 ps.close();

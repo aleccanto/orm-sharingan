@@ -12,35 +12,35 @@ public class GeradorSqlImpl<T extends Entidade> implements GeradorSql<T> {
 
     private static final Logger LOGGER = ORMSharinganApp.LOGGER;
 
-    private final Class<T> clazz;
+    private final Class<T> classe;
 
-    public GeradorSqlImpl(Class<T> clazz) {
-        this.clazz = clazz;
+    public GeradorSqlImpl(Class<T> classe) {
+        this.classe = classe;
     }
 
     @Override
     public String gerarSelectTodos() {
-        String classeName = clazz.getSimpleName().toLowerCase();
-        String sql = "SELECT * FROM " + classeName;
-        LOGGER.info("SQL: \n\t" + sql);
-        return sql;
+        String nomeClasse = classe.getSimpleName().toLowerCase();
+        String comandoSql = "SELECT * FROM " + nomeClasse;
+        LOGGER.info("SQL: \n\t" + comandoSql);
+        return comandoSql;
     }
 
     @Override
     public String gerarSelectPorId(Long id) {
-        String classeName = clazz.getSimpleName().toLowerCase();
-        String sql = "SELECT * FROM " + classeName + " WHERE id = ?";
-        LOGGER.info("SQL: " + sql);
-        return sql;
+        String nomeClasse = classe.getSimpleName().toLowerCase();
+        String comandoSql = "SELECT * FROM " + nomeClasse + " WHERE id = ?";
+        LOGGER.info("SQL: " + comandoSql);
+        return comandoSql;
     }
 
     @Override
     public String gerarInsert(T t) throws IllegalArgumentException, IllegalAccessException {
-        String nomeClasse = clazz.getSimpleName().toLowerCase();
-        String sql = "INSERT INTO " + nomeClasse;
-        String sqlDeclaredValues = " (";
-        String values = ") VALUES (";
-        String sqlFinal = "";
+        String nomeClasse = classe.getSimpleName().toLowerCase();
+        String comandoSql = "INSERT INTO " + nomeClasse;
+        String colunasDeclaradasSql = " (";
+        String valores = ") VALUES (";
+        String comandoSqlFinal = "";
 
         for (Field field : t.getClass().getDeclaredFields()) {
             field.setAccessible(true);
@@ -49,52 +49,52 @@ public class GeradorSqlImpl<T extends Entidade> implements GeradorSql<T> {
                 continue;
             }
             if (field.get(t) != null) {
-                sqlDeclaredValues += field.getName().toLowerCase() + ", ";
-                values += "?, ";
+                colunasDeclaradasSql += field.getName().toLowerCase() + ", ";
+                valores += "?, ";
             }
         }
-        sqlFinal = sql + sqlDeclaredValues.substring(0, sqlDeclaredValues.length() - 2)
-                + values.substring(0, values.length() - 2) + ")";
+        comandoSqlFinal = comandoSql + colunasDeclaradasSql.substring(0, colunasDeclaradasSql.length() - 2)
+                + valores.substring(0, valores.length() - 2) + ")";
 
-        LOGGER.info("SQL: \n\t" + sqlFinal);
-        return sqlFinal;
+        LOGGER.info("SQL: " + comandoSqlFinal);
+        return comandoSqlFinal;
     }
 
     @Override
     public String gerarUpdate(T t) throws IllegalArgumentException, IllegalAccessException {
-        String className = clazz.getSimpleName().toLowerCase();
-        StringBuilder sqlUpdate = new StringBuilder();
-        sqlUpdate.append("UPDATE ").append(className).append(" SET ");
-        String sqlWhere = "WHERE id = " + t.getId();
-        String sqlFInal = "";
-        for (Field field : clazz.getDeclaredFields()) {
+        String nomeClasse = classe.getSimpleName().toLowerCase();
+        StringBuilder comandoSqlUpdate = new StringBuilder();
+        comandoSqlUpdate.append("UPDATE ").append(nomeClasse).append(" SET ");
+        String clausulaWhereSql = "WHERE id = " + t.getId();
+        String comandoSqlFinal = "";
+        for (Field field : classe.getDeclaredFields()) {
             field.setAccessible(true);
             if (t.getId() == null) {
-                LOGGER.info("Id nulo, criando o objeto: " + className);
+                LOGGER.info("Id nulo, criando o objeto: " + nomeClasse);
                 return "";
             }
             if (field.get(t) != null && !"id".equals(field.getName())) {
-                sqlUpdate.append(field.getName()).append(" = ?, ");
+                comandoSqlUpdate.append(field.getName()).append(" = ?, ");
             }
         }
-        sqlFInal = sqlUpdate.substring(0, sqlUpdate.length() - 2) + " " + sqlWhere;
-        LOGGER.info("SQLFINAL: {0}", sqlFInal);
+        comandoSqlFinal = comandoSqlUpdate.substring(0, comandoSqlUpdate.length() - 2) + " " + clausulaWhereSql;
+        LOGGER.info("SQLFINAL: {0}", comandoSqlFinal);
 
-        return sqlFInal;
+        return comandoSqlFinal;
     }
 
     @Override
     public String gerarDeleteTodos() {
-        String sqlDelete = "DELETE FROM " + clazz.getSimpleName().toLowerCase();
-        String sqlWhere = "WHERE id > 0";
-        String sqlFinal = sqlDelete + " " + sqlWhere;
-        LOGGER.info("SQL: \n\t{0}", sqlFinal);
-        return sqlFinal;
+        String comandoSqlDelete = "DELETE FROM " + classe.getSimpleName().toLowerCase();
+        String clausulaWhereSql = "WHERE id > 0";
+        String comandoSqlFinal = comandoSqlDelete + " " + clausulaWhereSql;
+        LOGGER.info("SQL:  {0}", comandoSqlFinal);
+        return comandoSqlFinal;
     }
 
     @Override
     public Class<T> obterClasse() {
-        return clazz;
+        return classe;
     }
 
 }

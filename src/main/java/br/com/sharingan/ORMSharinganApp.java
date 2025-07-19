@@ -13,17 +13,17 @@ public class ORMSharinganApp {
         ConexaoFactoryImpl conexaoFactory = new ConexaoFactoryImpl();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            conexaoFactory.close();
-            LOGGER.info("HikariCP connection pool closed.");
+            conexaoFactory.fechar();
+            LOGGER.info("Pool de conexões HikariCP fechado.");
         }));
 
-        LOGGER.info("ORMSharinganApp started. Connection pool is active.");
+        LOGGER.info("ORMSharinganApp iniciado. Pool de conexões ativo.");
 
         try {
-            Thread.sleep(5000); // Keep alive for 5 seconds
+            Thread.sleep(5000); // Mantém ativo por 5 segundos
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        LOGGER.info("ORMSharinganApp finished.");
+        LOGGER.info("ORMSharinganApp finalizado.");
     }
 }

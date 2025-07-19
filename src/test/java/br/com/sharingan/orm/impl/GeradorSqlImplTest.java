@@ -6,12 +6,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import br.com.sharingan.orm.GeradorSql;
-import br.com.sharingan.orm.model.Carro;
-import br.com.sharingan.orm.model.Pessoa;
+import br.com.sharingan.orm.modelo.Carro;
+import br.com.sharingan.orm.modelo.Pessoa;
 
 public class GeradorSqlImplTest {
+
     @Test
-    public void testGerarInsertPessoa() throws IllegalArgumentException, IllegalAccessException {
+    public void testarGerarInsertPessoa() throws IllegalArgumentException, IllegalAccessException {
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
         Pessoa pessoa = new Pessoa();
@@ -24,7 +25,7 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarSelectAll() {
+    public void testarGerarSelectTodos() {
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
@@ -34,7 +35,7 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarSelectPorIdPessoa() {
+    public void testarGerarSelectPorIdPessoa() {
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
@@ -45,7 +46,7 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarUpdatePessoa() throws IllegalArgumentException, IllegalAccessException {
+    public void testarGerarUpdatePessoa() throws IllegalArgumentException, IllegalAccessException {
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
         Pessoa pessoa = new Pessoa();
@@ -58,7 +59,7 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarDeleteTodosPessoa() {
+    public void testarGerarDeleteTodosPessoa() {
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
         String sqlGerado = geradorSql.gerarDeleteTodos();
@@ -67,7 +68,7 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarSelectAllCarro() {
+    public void testarGerarSelectTodosCarro() {
 
         GeradorSql<Carro> geradorSql = new GeradorSqlImpl<>(Carro.class);
 
@@ -78,7 +79,7 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarInsertCarro() throws IllegalArgumentException, IllegalAccessException {
+    public void testarGerarInsertCarro() throws IllegalArgumentException, IllegalAccessException {
         GeradorSql<Carro> geradorSql = new GeradorSqlImpl<>(Carro.class);
 
         Carro carro = new Carro();
@@ -92,7 +93,7 @@ public class GeradorSqlImplTest {
     }
 
     @Test
-    public void testGerarUpdateCarro() throws IllegalArgumentException, IllegalAccessException {
+    public void testarGerarUpdateCarro() throws IllegalArgumentException, IllegalAccessException {
         GeradorSql<Carro> geradorSql = new GeradorSqlImpl<>(Carro.class);
 
         Carro carro = new Carro();

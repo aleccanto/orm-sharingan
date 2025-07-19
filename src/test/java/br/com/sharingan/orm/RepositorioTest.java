@@ -27,20 +27,20 @@ public class RepositorioTest {
     }
 
     @Before
-    public void setUp() throws SQLException, IOException {
-        ConexaoFactory connection = new ConexaoFactoryImpl();
-        try (Connection c = connection.obterConexao()) {
+    public void configurar() throws SQLException, IOException {
+        ConexaoFactory conexao = new ConexaoFactoryImpl();
+        try (Connection c = conexao.obterConexao()) {
             try (Statement statement = c.createStatement()) {
-                statement.execute(getSql());
+                statement.execute(obterSql());
             }
         }
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-        new RepositorioImpl<>(connection, geradorSql).excluirTodos();
+        new RepositorioImpl<>(conexao, geradorSql).excluirTodos();
     }
 
-    private String getSql() throws IOException {
+    private String obterSql() throws IOException {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("script.sql");
         StringBuilder stringBuilder = new StringBuilder();
         try (Reader reader = new InputStreamReader(inputStream)) {
@@ -53,14 +53,14 @@ public class RepositorioTest {
     }
 
     @Test
-    public void testBuscarTodos() throws SQLException, InstantiationException, IllegalAccessException,
+    public void testarBuscarTodos() throws SQLException, InstantiationException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
-        ConexaoFactory connection = new ConexaoFactoryImpl();
+        ConexaoFactory conexao = new ConexaoFactoryImpl();
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-        Repositorio<Pessoa> repositorio = new RepositorioImpl<>(connection, geradorSql);
+        Repositorio<Pessoa> repositorio = new RepositorioImpl<>(conexao, geradorSql);
 
         Pessoa pessoa1 = new Pessoa();
         Pessoa pessoa2 = new Pessoa();
@@ -83,14 +83,14 @@ public class RepositorioTest {
     }
 
     @Test
-    public void testBuscarPorId() throws SQLException, InstantiationException, IllegalAccessException,
+    public void testarBuscarPorId() throws SQLException, InstantiationException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
-        ConexaoFactory connection = new ConexaoFactoryImpl();
+        ConexaoFactory conexao = new ConexaoFactoryImpl();
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-        Repositorio<Pessoa> repositorio = new RepositorioImpl<>(connection, geradorSql);
+        Repositorio<Pessoa> repositorio = new RepositorioImpl<>(conexao, geradorSql);
 
         Pessoa pessoa = new Pessoa();
 
@@ -105,13 +105,13 @@ public class RepositorioTest {
     }
 
     @Test
-    public void testCriar() throws IllegalArgumentException, IllegalAccessException {
+    public void testarCriar() throws IllegalArgumentException, IllegalAccessException {
 
-        ConexaoFactory connection = new ConexaoFactoryImpl();
+        ConexaoFactory conexao = new ConexaoFactoryImpl();
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-        Repositorio<Pessoa> query = new RepositorioImpl<>(connection, geradorSql);
+        Repositorio<Pessoa> query = new RepositorioImpl<>(conexao, geradorSql);
 
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1L);
@@ -124,13 +124,13 @@ public class RepositorioTest {
     }
 
     @Test
-    public void testExcluirTodos() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+    public void testarExcluirTodos() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, NoSuchMethodException, SecurityException, SQLException {
-        ConexaoFactory connection = new ConexaoFactoryImpl();
+        ConexaoFactory conexao = new ConexaoFactoryImpl();
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-        Repositorio<Pessoa> query = new RepositorioImpl<>(connection, geradorSql);
+        Repositorio<Pessoa> query = new RepositorioImpl<>(conexao, geradorSql);
 
         Boolean deletou = query.excluirTodos();
 
@@ -141,12 +141,12 @@ public class RepositorioTest {
     }
 
     @Test
-    public void testAtualizar() throws IllegalArgumentException, IllegalAccessException {
-        ConexaoFactory connection = new ConexaoFactoryImpl();
+    public void testarAtualizar() throws IllegalArgumentException, IllegalAccessException {
+        ConexaoFactory conexao = new ConexaoFactoryImpl();
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-        Repositorio<Pessoa> query = new RepositorioImpl<>(connection, geradorSql);
+        Repositorio<Pessoa> query = new RepositorioImpl<>(conexao, geradorSql);
 
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1L);

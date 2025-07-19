@@ -1,4 +1,4 @@
-package br.com.sharingan.orm.model;
+package br.com.sharingan.orm.modelo;
 
 import java.math.BigDecimal;
 

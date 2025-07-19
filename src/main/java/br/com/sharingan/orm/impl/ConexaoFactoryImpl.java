@@ -62,14 +62,14 @@ public class ConexaoFactoryImpl implements ConexaoFactory {
         }
     }
 
-    public void close() {
+    public void fechar() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
             LOGGER.info("Pool de conexoes fechado.");
         }
     }
 
-    public Logger getLogger() {
+    public Logger obterLogger() {
         return LOGGER;
     }
 }
