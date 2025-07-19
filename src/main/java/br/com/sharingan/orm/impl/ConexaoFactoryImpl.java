@@ -1,4 +1,4 @@
-package br.com.sharingan.infrastructure.orm.conexao;
+package br.com.sharingan.orm.impl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,7 +9,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import br.com.sharingan.ORMSharinganApp;
-import br.com.sharingan.domain.orm.conexao.ConexaoFactory;
+import br.com.sharingan.orm.ConexaoFactory;
 
 public class ConexaoFactoryImpl implements ConexaoFactory {
 

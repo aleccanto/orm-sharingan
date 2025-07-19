@@ -1,4 +1,4 @@
-package br.com.sharingan.infrastructure;
+package br.com.sharingan.orm;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,13 +15,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.com.sharingan.domain.orm.Repositorio;
-import br.com.sharingan.domain.orm.conexao.ConexaoFactory;
-import br.com.sharingan.domain.orm.sql.GeradorSql;
-import br.com.sharingan.infrastructure.model.Pessoa;
-import br.com.sharingan.infrastructure.orm.conexao.ConexaoFactoryImpl;
-import br.com.sharingan.infrastructure.orm.repositorio.RepositorioImpl;
-import br.com.sharingan.infrastructure.orm.sql.GeradorSqlImpl;
+import br.com.sharingan.orm.impl.ConexaoFactoryImpl;
+import br.com.sharingan.orm.impl.GeradorSqlImpl;
+import br.com.sharingan.orm.impl.RepositorioImpl;
+import br.com.sharingan.orm.model.Pessoa;
 
 public class RepositorioTest {
 

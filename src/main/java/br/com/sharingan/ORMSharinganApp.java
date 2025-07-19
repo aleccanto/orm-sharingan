@@ -3,7 +3,7 @@ package br.com.sharingan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.com.sharingan.infrastructure.orm.conexao.ConexaoFactoryImpl;
+import br.com.sharingan.orm.impl.ConexaoFactoryImpl;
 
 public class ORMSharinganApp {
 

@@ -1,14 +1,13 @@
-package br.com.sharingan.infrastructure.sql;
+package br.com.sharingan.orm.impl;
 
 import java.math.BigDecimal;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.com.sharingan.infrastructure.orm.sql.GeradorSqlImpl;
-import br.com.sharingan.domain.orm.sql.GeradorSql;
-import br.com.sharingan.infrastructure.model.Carro;
-import br.com.sharingan.infrastructure.model.Pessoa;
+import br.com.sharingan.orm.GeradorSql;
+import br.com.sharingan.orm.model.Carro;
+import br.com.sharingan.orm.model.Pessoa;
 
 public class GeradorSqlImplTest {
     @Test

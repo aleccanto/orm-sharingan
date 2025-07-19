@@ -1,12 +1,12 @@
-package br.com.sharingan.infrastructure.orm.sql;
+package br.com.sharingan.orm.impl;
 
 import java.lang.reflect.Field;
 
 import org.slf4j.Logger;
 
 import br.com.sharingan.ORMSharinganApp;
-import br.com.sharingan.domain.orm.entidade.Entidade;
-import br.com.sharingan.domain.orm.sql.GeradorSql;
+import br.com.sharingan.orm.Entidade;
+import br.com.sharingan.orm.GeradorSql;
 
 public class GeradorSqlImpl<T extends Entidade> implements GeradorSql<T> {
 

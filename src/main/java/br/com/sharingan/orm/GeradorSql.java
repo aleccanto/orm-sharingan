@@ -1,6 +1,4 @@
-package br.com.sharingan.domain.orm.sql;
-
-import br.com.sharingan.domain.orm.entidade.Entidade;
+package br.com.sharingan.orm;
 
 public interface GeradorSql<T extends Entidade> {
 

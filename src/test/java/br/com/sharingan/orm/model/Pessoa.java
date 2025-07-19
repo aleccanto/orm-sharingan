@@ -1,6 +1,6 @@
-package br.com.sharingan.infrastructure.model;
+package br.com.sharingan.orm.model;
 
-import br.com.sharingan.domain.orm.entidade.Entidade;
+import br.com.sharingan.orm.Entidade;
 
 public class Pessoa implements Entidade {
 

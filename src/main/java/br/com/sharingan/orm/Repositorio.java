@@ -1,8 +1,6 @@
-package br.com.sharingan.domain.orm;
+package br.com.sharingan.orm;
 
 import java.util.List;
-
-import br.com.sharingan.domain.orm.entidade.Entidade;
 
 public interface Repositorio<T extends Entidade> {
 

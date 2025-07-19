@@ -1,4 +1,4 @@
-package br.com.sharingan.infrastructure.orm.repositorio;
+package br.com.sharingan.orm.impl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,10 +13,10 @@ import java.util.Objects;
 import org.slf4j.Logger;
 
 import br.com.sharingan.ORMSharinganApp;
-import br.com.sharingan.domain.orm.Repositorio;
-import br.com.sharingan.domain.orm.conexao.ConexaoFactory;
-import br.com.sharingan.domain.orm.entidade.Entidade;
-import br.com.sharingan.domain.orm.sql.GeradorSql;
+import br.com.sharingan.orm.ConexaoFactory;
+import br.com.sharingan.orm.Entidade;
+import br.com.sharingan.orm.GeradorSql;
+import br.com.sharingan.orm.Repositorio;
 
 public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
 
