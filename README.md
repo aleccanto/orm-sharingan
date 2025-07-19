@@ -17,6 +17,45 @@ O **ORM Sharingan** é um projeto de Object-Relational Mapping (ORM) desenvolvid
 *   **Conexão com Banco de Dados:** Gerenciamento de conexão com banco de dados utilizando [HikariCP](https://github.com/brettwooldridge/HikariCP) para pooling de conexões de alta performance.
 *   **Suporte a H2 (para Testes):** Configuração para uso de banco de dados em memória [H2 Database](http://www.h2database.com/html/main.html) para facilitar a execução de testes, garantindo um ambiente isolado e rápido.
 
+## Utilizando Anotações
+
+O ORM Sharingan utiliza anotações para mapear suas classes Java para as tabelas do banco de dados, oferecendo flexibilidade e clareza no mapeamento.
+
+### `@Tabela`
+
+Utilizada para especificar o nome da tabela no banco de dados à qual a classe está mapeada. Se não for especificada, o nome da classe (em minúsculas) será usado como nome da tabela.
+
+```java
+@Tabela("minha_tabela_personalizada")
+public class MeuObjeto {
+    // ...
+}
+```
+
+### `@Id`
+
+Marca um campo como a chave primária da tabela. O ORM utilizará este campo para operações de busca por ID e atualizações. Se o `valor` não for especificado, o nome do campo será usado como o nome da coluna da chave primária.
+
+```java
+public class MeuObjeto {
+    @Id("id_personalizado")
+    private Long id;
+    // ...
+}
+```
+
+### `@Coluna`
+
+Utilizada para especificar o nome da coluna no banco de dados à qual um campo da classe está mapeado. Se não for especificada, o nome do campo (em minúsculas) será usado como o nome da coluna.
+
+```java
+public class MeuObjeto {
+    @Coluna("nome_completo")
+    private String nome;
+    // ...
+}
+```
+
 ## Tecnologias Utilizadas
 
 *   [Java 11+](https://www.java.com/): Linguagem de programação orientada a objetos.
@@ -64,14 +103,16 @@ mvn test
 
 ```java
 // Exemplo de Entidade
-public class Pessoa implements Entidade {
+@Tabela("pessoas")
+public class Pessoa {
+    @Id("id")
     private Long id;
+
+    @Coluna("nome")
     private String nome;
 
     // Getters e Setters
-    @Override
     public Long getId() { return id; }
-    @Override
     public void setId(Long id) { this.id = id; }
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }

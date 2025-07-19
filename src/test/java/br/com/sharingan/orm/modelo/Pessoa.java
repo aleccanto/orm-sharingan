@@ -1,9 +1,12 @@
 package br.com.sharingan.orm.modelo;
 
-import br.com.sharingan.orm.Entidade;
+import br.com.sharingan.anotacoes.Entidade;
+import br.com.sharingan.anotacoes.Id;
 
-public class Pessoa implements Entidade {
+@Entidade
+public class Pessoa {
 
+    @Id
     private Long id;
 
     private String nome;

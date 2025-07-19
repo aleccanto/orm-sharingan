@@ -13,22 +13,19 @@ import java.util.Objects;
 import org.slf4j.Logger;
 
 import br.com.sharingan.ORMSharinganApp;
+import br.com.sharingan.anotacoes.Id;
 import br.com.sharingan.orm.ConexaoFactory;
-import br.com.sharingan.orm.Entidade;
 import br.com.sharingan.orm.GeradorSql;
 import br.com.sharingan.orm.Repositorio;
 
-public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
+public class RepositorioImpl<T> implements Repositorio<T> {
 
     private static final Logger LOGGER = ORMSharinganApp.LOGGER;
+    private static final String ERRO_AO_ACESSAR_O_OBJETO = "Erro ao acessar o objeto ";
+    private static final String ERRO_AO_CRIAR_O_PREPAREDSTATEMENT = "Erro ao criar o PreparedStatement: ";
 
     private final Connection conexao;
-
     private final GeradorSql<T> geradorSql;
-
-    private static final String ERRO_AO_ACESSAR_O_OBJETO = "Erro ao acessar o objeto ";
-
-    private static final String ERRO_AO_CRIAR_O_PREPAREDSTATEMENT = "Erro ao criar o PreparedStatement: ";
 
     public RepositorioImpl(ConexaoFactory conexaoFactory, GeradorSql<T> geradorSql) {
         this.conexao = conexaoFactory.obterConexao();
@@ -103,17 +100,19 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
                 ResultSet rs = ps.getGeneratedKeys();
                 if (rs.next()) {
                     Long id = rs.getLong(1);
-                    Field field = geradorSql.obterClasse().getDeclaredField("id");
-                    field.setAccessible(true);
-                    field.set(t, id);
+                    Field idField = obterCampoId(t.getClass());
+                    if (idField != null) {
+                        idField.setAccessible(true);
+                        idField.set(t, id);
+                    }
                 }
                 return t;
 
-            } catch (SQLException | NoSuchFieldException | SecurityException e) {
+            } catch (SQLException | SecurityException | IllegalAccessException | IllegalArgumentException e) {
                 LOGGER.info(ERRO_AO_CRIAR_O_PREPAREDSTATEMENT + e);
             } finally {
-            fecharPreparedStatement(ps);
-        }
+                fecharPreparedStatement(ps);
+            }
         } catch (IllegalArgumentException | IllegalAccessException e) {
             LOGGER.info("Erro ao acessar o objeto: " + e.getLocalizedMessage());
         } finally {
@@ -204,46 +203,65 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
         return lista;
     }
 
-    private List<T> percorrerCamposSelect(Class<T> t, ResultSet rs) throws SQLException, InstantiationException,
-            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private List<T> percorrerCamposSelect(Class<T> t, ResultSet rs)
+            throws SQLException, InstantiationException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
+
         LOGGER.info("Iniciando o percorrerCamposSelect");
         List<T> listaAux = new ArrayList<>();
+
         while (rs.next()) {
             T obj = t.getConstructor().newInstance();
+
             for (Field field : t.getDeclaredFields()) {
                 field.setAccessible(true);
-                LOGGER.info("Iniciando o switch");
-                switch (field.getType().getSimpleName()) {
+                String name = field.getName();
+                String type = field.getType().getSimpleName();
+
+                Object value;
+                switch (type) {
                     case "String":
-                        field.set(obj, rs.getString(field.getName()));
+                        value = rs.getString(name);
                         break;
                     case "Long":
-                        field.set(obj, rs.getLong(field.getName()));
+                        value = rs.getLong(name);
                         break;
                     case "Integer":
-                        field.set(obj, rs.getInt(field.getName()));
+                        value = rs.getInt(name);
                         break;
                     case "Double":
-                        field.set(obj, rs.getDouble(field.getName()));
+                        value = rs.getDouble(name);
                         break;
                     case "Float":
-                        field.set(obj, rs.getFloat(field.getName()));
+                        value = rs.getFloat(name);
                         break;
                     case "Boolean":
-                        field.set(obj, rs.getBoolean(field.getName()));
+                        value = rs.getBoolean(name);
                         break;
                     case "Date":
-                        field.set(obj, rs.getDate(field.getName()));
+                        value = rs.getDate(name);
                         break;
                     default:
+                        value = rs.getObject(name);
                         break;
                 }
-                LOGGER.info("finalizando o switch");
+
+                field.set(obj, value);
             }
+
             listaAux.add(obj);
         }
-        LOGGER.info("finalizando o percorrerCamposSelect");
+
+        LOGGER.info("Finalizando o percorrerCamposSelect");
         return listaAux;
     }
 
+    private Field obterCampoId(Class<?> classe) {
+        for (Field field : classe.getDeclaredFields()) {
+            if (field.isAnnotationPresent(Id.class)) {
+                return field;
+            }
+        }
+        return null;
+    }
 }

@@ -1,6 +1,6 @@
 package br.com.sharingan.orm;
 
-public interface GeradorSql<T extends Entidade> {
+public interface GeradorSql<T> {
 
     Class<T> obterClasse();
 

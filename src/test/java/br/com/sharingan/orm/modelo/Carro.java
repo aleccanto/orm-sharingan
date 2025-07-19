@@ -2,13 +2,19 @@ package br.com.sharingan.orm.modelo;
 
 import java.math.BigDecimal;
 
-import br.com.sharingan.orm.Entidade;
+import br.com.sharingan.anotacoes.Entidade;
+import br.com.sharingan.anotacoes.Id;
 
-public class Carro implements Entidade {
+@Entidade
+public class Carro {
 
+    @Id
     private Long id;
+
     private String nome;
+
     private BigDecimal preco;
+
     private Double peso;
 
     public Long getId() {

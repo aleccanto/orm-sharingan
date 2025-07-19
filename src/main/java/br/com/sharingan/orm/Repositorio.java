@@ -2,7 +2,7 @@ package br.com.sharingan.orm;
 
 import java.util.List;
 
-public interface Repositorio<T extends Entidade> {
+public interface Repositorio<T> {
 
 	List<T> buscarTodos();
 
