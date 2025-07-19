@@ -21,6 +21,18 @@ public class GeradorSqlImpl<T> implements GeradorSql<T> {
         if (!classe.isAnnotationPresent(Entidade.class)) {
             throw new IllegalArgumentException("A classe " + classe.getSimpleName() + " não está anotada com @Entidade.");
         }
+
+        boolean hasId = false;
+        for (Field field : classe.getDeclaredFields()) {
+            if (field.isAnnotationPresent(Id.class)) {
+                hasId = true;
+                break;
+            }
+        }
+        if (!hasId) {
+            throw new IllegalArgumentException("A classe " + classe.getSimpleName() + " deve ter um campo anotado com @Id.");
+        }
+
         this.classe = classe;
     }
 
