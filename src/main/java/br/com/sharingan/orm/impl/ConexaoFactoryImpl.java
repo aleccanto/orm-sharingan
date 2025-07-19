@@ -52,7 +52,7 @@ public class ConexaoFactoryImpl implements ConexaoFactory {
     }
 
     @Override
-    public Connection getConnection() {
+    public Connection obterConexao() {
         LOGGER.info("Obtendo conexao do pool");
         try {
             return dataSource.getConnection();

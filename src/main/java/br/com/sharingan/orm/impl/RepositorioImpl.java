@@ -31,7 +31,7 @@ public class RepositorioImpl<T extends Entidade> implements Repositorio<T> {
     private static final String ERRO_AO_CRIAR_O_PREPAREDSTATEMENT = "Erro ao criar o PreparedStatement: ";
 
     public RepositorioImpl(ConexaoFactory connection, GeradorSql<T> geradorSql) {
-        this.conexao = connection.getConnection();
+        this.conexao = connection.obterConexao();
         this.geradorSql = geradorSql;
     }
 

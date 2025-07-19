@@ -18,7 +18,7 @@ import org.junit.Test;
 import br.com.sharingan.orm.impl.ConexaoFactoryImpl;
 import br.com.sharingan.orm.impl.GeradorSqlImpl;
 import br.com.sharingan.orm.impl.RepositorioImpl;
-import br.com.sharingan.orm.model.Pessoa;
+import br.com.sharingan.orm.modelo.Pessoa;
 
 public class RepositorioTest {
 
@@ -29,7 +29,7 @@ public class RepositorioTest {
     @Before
     public void setUp() throws SQLException, IOException {
         ConexaoFactory connection = new ConexaoFactoryImpl();
-        try (Connection c = connection.getConnection()) {
+        try (Connection c = connection.obterConexao()) {
             try (Statement statement = c.createStatement()) {
                 statement.execute(getSql());
             }
@@ -37,7 +37,7 @@ public class RepositorioTest {
 
         GeradorSql<Pessoa> geradorSql = new GeradorSqlImpl<>(Pessoa.class);
 
-        new RepositorioImpl<Pessoa>(connection, geradorSql).excluirTodos();
+        new RepositorioImpl<>(connection, geradorSql).excluirTodos();
     }
 
     private String getSql() throws IOException {
