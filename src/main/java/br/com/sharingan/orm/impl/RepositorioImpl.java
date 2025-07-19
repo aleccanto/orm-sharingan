@@ -42,7 +42,7 @@ public class RepositorioImpl<T> implements Repositorio<T> {
             stmt = conexao.prepareStatement(sql);
             rs = stmt.executeQuery();
         } catch (SQLException e) {
-            LOGGER.info(ERRO_AO_CRIAR_O_PREPAREDSTATEMENT + e.getLocalizedMessage());
+            LOGGER.error(ERRO_AO_CRIAR_O_PREPAREDSTATEMENT + e.getLocalizedMessage());
         }
         List<T> lista = new ArrayList<>();
         if (Objects.nonNull(stmt) && Objects.nonNull(rs)) {

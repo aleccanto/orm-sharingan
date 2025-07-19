@@ -2,8 +2,10 @@ package br.com.sharingan.orm.modelo;
 
 import br.com.sharingan.anotacoes.Entidade;
 import br.com.sharingan.anotacoes.Id;
+import br.com.sharingan.anotacoes.Tabela;
 
 @Entidade
+@Tabela("pessoas")
 public class Pessoa {
 
     @Id
