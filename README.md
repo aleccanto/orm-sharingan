@@ -21,9 +21,13 @@ O **ORM Sharingan** é um projeto de Object-Relational Mapping (ORM) desenvolvid
 
 O ORM Sharingan utiliza anotações para mapear suas classes Java para as tabelas do banco de dados, oferecendo flexibilidade e clareza no mapeamento.
 
+### `@Entidade`
+
+**Obrigatória.** Marca uma classe como uma entidade gerenciada pelo ORM. Classes anotadas com `@Entidade` são elegíveis para mapeamento e operações de persistência.
+
 ### `@Tabela`
 
-Utilizada para especificar o nome da tabela no banco de dados à qual a classe está mapeada. Se não for especificada, o nome da classe (em minúsculas) será usado como nome da tabela.
+Utilizada para especificar o nome da tabela no banco de dados à qual a classe está mapeada. Se não for especificada, o nome da classe (em minúsculas e **pluralizado automaticamente**) será usado como nome da tabela.
 
 ```java
 @Tabela("minha_tabela_personalizada")
@@ -34,7 +38,7 @@ public class MeuObjeto {
 
 ### `@Id`
 
-Marca um campo como a chave primária da tabela. O ORM utilizará este campo para operações de busca por ID e atualizações. Se o `valor` não for especificado, o nome do campo será usado como o nome da coluna da chave primária.
+**Obrigatória.** Marca um campo como a chave primária da tabela. O ORM utilizará este campo para operações de busca por ID e atualizações. Se o `value` não for especificado, o nome do campo será usado como o nome da coluna da chave primária.
 
 ```java
 public class MeuObjeto {
@@ -55,6 +59,13 @@ public class MeuObjeto {
     // ...
 }
 ```
+
+## Cobertura de Testes
+
+O projeto possui uma suíte de testes abrangente, cobrindo:
+
+*   **Testes de Geração de SQL:** Verificam a correção dos comandos SQL gerados para operações CRUD, incluindo cenários com campos nulos e uso explícito de anotações `@Tabela`, `@Id` e `@Coluna`.
+*   **Testes de Repositório:** Validam as operações de persistência e recuperação de dados (CRUD) no banco de dados H2 em memória, incluindo casos positivos e negativos (e.g., busca por ID inexistente, exclusão de registros em tabelas vazias).
 
 ## Tecnologias Utilizadas
 
